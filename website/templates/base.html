@@ -23,6 +23,7 @@
         {% endfor %}
       </select>
     </div>
+      <div id="communeContainer">
     <div class="form-group">
       <label for="commune">Commune(s)</label>
       <select id="commune" name="commune" class="form-control" onchange="updateSelectOptions(1)">
@@ -32,11 +33,11 @@
         {% endfor %}
       </select>
     </div>
+      </div>
     <div class="form-group">
       <label for="preciser">Préciser</label>
       <input type="text" class="form-control" name="preciser" id="preciser" placeholder="Préciser">
     </div>
-    <button onclick="getSelectedValues()">Get Selected Values</button>
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
 
@@ -81,6 +82,28 @@
         communeSelect.appendChild(option);
       });
     }
+
+function addCommuneSelect() {
+  const departementSelect = document.getElementById('departement');
+  const communeContainer = document.getElementById('communeContainer');
+
+  const newCommuneSelect = document.createElement('div');
+  newCommuneSelect.className = 'form-group';
+
+  // Filter communes based on the selected departement
+  const selectedDepartementId = departementSelect.value;
+  const filteredCommunes = communesData.filter(commune => commune.departementId == selectedDepartementId);
+
+  newCommuneSelect.innerHTML = `
+    <label for="commune">Commune(s)</label>
+    <select name="commune" class="form-control">
+      <option disabled selected value> -- choisir une option -- </option>
+      ${filteredCommunes.map(commune => `<option value="${commune.id}">${commune.name}</option>`).join('')}
+    </select>
+  `;
+
+  communeContainer.appendChild(newCommuneSelect);
+}
 
     function getSelectedValues() {
       const departementSelect = document.getElementById('departement');
