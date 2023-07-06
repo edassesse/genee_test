@@ -1,95 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
-      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-      crossorigin="anonymous">
-  </head>
-  <body>
-    <form method="POST">
-      <div class="form-group">
-        <label for="name">Nom</label>
-        <input type="text" class="form-control" id="name" name="name" placeholder="Entrez un nom"/>
-      </div>
-      <div class="form-group">
-        <label for="departement">Département</label>
-        <select id="departement" name="departement" class="form-control" onchange="updateCommuneOptions(this.value)">
-          <option disabled selected value> -- choisir une option -- </option>
-          {% for departement in departements %}
-          <option value="{{ departement.id }}">{{ departement.name }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="commune">Commune(s)</label>
-        <select id="commune" name="commune" class="form-control">
-          <option disabled selected value> -- choisir une option -- </option>
-          {% for commune in communes %}
-          <option value="{{ commune.id }}">{{ commune.name }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="preciser">Préciser</label>
-        <input type="text" class="form-control" name="preciser" id="preciser" placeholder="Préciser">
-      </div>
-        <button onclick="getSelectedValues()">Get Selected Values</button>
 
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-    <script>
-      function getSelectedValues() {
-  const departementSelect = document.getElementById('departement');
-  const communeSelect = document.getElementById('commune');
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
 
-  const selectedDepartementId = departementSelect.value;
-  const selectedCommuneId = communeSelect.value;
+<body>
+  <form method="POST">
+    <div class="form-group">
+      <label for="name">Nom</label>
+      <input type="text" class="form-control" id="name" name="name" placeholder="Entrez un nom" />
+    </div>
+    <div class="form-group">
+      <label for="departement">Département</label>
+      <select id="departement" name="departement" class="form-control" onchange="updateSelectOptions(2)">
+        <option disabled selected value> -- choisir une option -- </option>
+        {% for departement in departements %}
+        <option value="{{ departement.id }}">{{ departement.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="commune">Commune(s)</label>
+      <select id="commune" name="commune" class="form-control" onchange="updateSelectOptions(1)">
+        <option disabled selected value> -- choisir une option -- </option>
+        {% for commune in communes %}
+        <option value="{{ commune.id }}">{{ commune.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="preciser">Préciser</label>
+      <input type="text" class="form-control" name="preciser" id="preciser" placeholder="Préciser">
+    </div>
+    <button onclick="getSelectedValues()">Get Selected Values</button>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
 
-        console.log('Selected Departement ID:', selectedDepartementId);
-        console.log('Selected Commune ID:', selectedCommuneId);
-      }
-
-  const communesData = [
-    {% for commune in communes %}
-      { id: {{ commune.id }}, name: '{{ commune.name }}', departementId: {{ commune.departement_id }} },
+  <script>
+    const communesData = [
+      {% for commune in communes %}
+    { id: {{ commune.id }}, name: '{{ commune.name }}', departementId: {{ commune.departement_id }} },
     {% endfor %}
     ];
 
-      function updateCommuneOptions() {
-        const departementSelect = document.getElementById('departement');
-    const communeSelect = document.getElementById('commune');
+    const departementData = [
+      {% for departement in departements %}
+    { id: {{ departement.id }}, name: '{{ departement.name }}' },
+    {% endfor %}
+    ];
 
-    communeSelect.innerHTML = '<option disabled selected value> -- choisir une option -- </option>';
+    function updateSelectOptions(x) {
+      const departementSelect = document.getElementById('departement');
+      const communeSelect = document.getElementById('commune');
 
-    const selectedDepartementId = departementSelect.value;
+      if (x == 1) {
+        const selectedCommuneId = communeSelect.value;
 
-    const filteredCommunes = communesData.filter(commune => commune.departementId == selectedDepartementId);
+        const selectedCommune = communesData.find(commune => commune.id == selectedCommuneId);
+        if (selectedCommune) {
+          departementSelect.value = selectedCommune.departementId;
+        }
+      }
+      else if (x == 2) {
+        communeSelect.innerHTML = '<option disabled selected value> -- choisir une option -- </option>';
+      }
+      else {
+        communeSelect.innerHTML = "";
+      }
+      const selectedDepartementId = departementSelect.value;
+      const filteredCommunes = communesData.filter(commune => commune.departementId == selectedDepartementId);
 
-    filteredCommunes.forEach(commune => {
-      const option = document.createElement('option');
-      option.value = commune.id;
-      option.textContent = commune.name;
-      communeSelect.appendChild(option);
-    });
-  }
-      function getSelectedValues() {
-  const departementSelect = document.getElementById('departement');
-  const communeSelect = document.getElementById('commune');
+      filteredCommunes.forEach(commune => {
+        const option = document.createElement('option');
+        option.value = commune.id;
+        option.textContent = commune.name;
+        communeSelect.appendChild(option);
+      });
+    }
 
-  const selectedDepartementId = departementSelect.value;
-  const selectedCommuneId = communeSelect.value;
+    function getSelectedValues() {
+      const departementSelect = document.getElementById('departement');
+      const communeSelect = document.getElementById('commune');
 
-  console.log('Selected Departement ID:', selectedDepartementId);
-  console.log('Selected Commune ID:', selectedCommuneId);
+      const selectedDepartementId = departementSelect.value;
+      const selectedCommuneId = communeSelect.value;
 
-  const form = document.querySelector('form');
-  form.submit();
-}
+      console.log('Selected Departement ID:', selectedDepartementId);
+      console.log('Selected Commune ID:', selectedCommuneId);
 
-    </script>
-  </body>
+      const form = document.querySelector('form');
+      form.submit();
+    }
+  </script>
+</body>
+
 </html>
