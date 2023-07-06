@@ -8,17 +8,6 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
       integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
       crossorigin="anonymous">
-    <!-- <link -->
-    <!--   rel="stylesheet" -->
-    <!--   href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" -->
-    <!--   integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" -->
-    <!--   crossorigin="anonymous" -->
-    <!-- /> -->
-    <!-- <link -->
-    <!--   rel="stylesheet" -->
-    <!--   href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" -->
-    <!--   crossorigin="anonymous" -->
-    
   </head>
   <body>
     <form method="POST">
@@ -28,19 +17,19 @@
       </div>
       <div class="form-group">
         <label for="departement">Département</label>
-        <select id="departement" name="departement" class="form-control">
+        <select id="departement" name="departement" class="form-control" onchange="updateCommuneOptions(this.value)">
           <option disabled selected value> -- choisir une option -- </option>
           {% for departement in departements %}
-          <option value="{{ departement.name }}">{{ departement.name }}</option>
+          <option value="{{ departement.id }}">{{ departement.name }}</option>
           {% endfor %}
         </select>
       </div>
       <div class="form-group">
         <label for="commune">Commune(s)</label>
-        <select id="commune" class="form-control">
+        <select id="commune" name="commune" class="form-control">
           <option disabled selected value> -- choisir une option -- </option>
           {% for commune in communes %}
-          <option value="{{ commune.name }}">{{ commune.name }}</option>
+          <option value="{{ commune.id }}">{{ commune.name }}</option>
           {% endfor %}
         </select>
       </div>
@@ -48,7 +37,59 @@
         <label for="preciser">Préciser</label>
         <input type="text" class="form-control" name="preciser" id="preciser" placeholder="Préciser">
       </div>
+        <button onclick="getSelectedValues()">Get Selected Values</button>
+
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
+    <script>
+      function getSelectedValues() {
+  const departementSelect = document.getElementById('departement');
+  const communeSelect = document.getElementById('commune');
+
+  const selectedDepartementId = departementSelect.value;
+  const selectedCommuneId = communeSelect.value;
+
+        console.log('Selected Departement ID:', selectedDepartementId);
+        console.log('Selected Commune ID:', selectedCommuneId);
+      }
+
+  const communesData = [
+    {% for commune in communes %}
+      { id: {{ commune.id }}, name: '{{ commune.name }}', departementId: {{ commune.departement_id }} },
+    {% endfor %}
+    ];
+
+      function updateCommuneOptions() {
+        const departementSelect = document.getElementById('departement');
+    const communeSelect = document.getElementById('commune');
+
+    communeSelect.innerHTML = '<option disabled selected value> -- choisir une option -- </option>';
+
+    const selectedDepartementId = departementSelect.value;
+
+    const filteredCommunes = communesData.filter(commune => commune.departementId == selectedDepartementId);
+
+    filteredCommunes.forEach(commune => {
+      const option = document.createElement('option');
+      option.value = commune.id;
+      option.textContent = commune.name;
+      communeSelect.appendChild(option);
+    });
+  }
+      function getSelectedValues() {
+  const departementSelect = document.getElementById('departement');
+  const communeSelect = document.getElementById('commune');
+
+  const selectedDepartementId = departementSelect.value;
+  const selectedCommuneId = communeSelect.value;
+
+  console.log('Selected Departement ID:', selectedDepartementId);
+  console.log('Selected Commune ID:', selectedCommuneId);
+
+  const form = document.querySelector('form');
+  form.submit();
+}
+
+    </script>
   </body>
 </html>

@@ -54,7 +54,6 @@ def create_app():
 
 
     with app.app_context():
-        db.drop_all()
         db.create_all()
         csv_departement_file = 'csv/departement.csv'
         csv_commune_file = 'csv/commune.csv'
