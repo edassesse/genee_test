@@ -65,15 +65,16 @@
         if (selectedCommune) {
           departementSelect.value = selectedCommune.departementId;
         }
+        communeSelect.innerHTML = "";
       }
       else if (x == 2) {
         communeSelect.innerHTML = '<option disabled selected value> -- choisir une option -- </option>';
       }
       else {
-        communeSelect.innerHTML = "";
       }
       const selectedDepartementId = departementSelect.value;
       const filteredCommunes = communesData.filter(commune => commune.departementId == selectedDepartementId);
+
 
       filteredCommunes.forEach(commune => {
         const option = document.createElement('option');
